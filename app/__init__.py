@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 load_dotenv()
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = os.path.abspath("output")
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 * 1024  # 16 GB limit
 app.config["DEBUG"] = os.environ.get("FLASK_DEBUG")
 
 output_folder = os.path.abspath("output")
