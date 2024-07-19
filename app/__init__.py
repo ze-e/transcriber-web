@@ -18,7 +18,7 @@ def home():
 
 @app.route('/test', methods=['GET'])
 def test():
-    return "test"
+    return "Hello World"
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
