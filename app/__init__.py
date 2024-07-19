@@ -17,7 +17,7 @@ def home():
     return render_template('upload.html')
 
 @app.route('/test', methods=['GET'])
-def home():
+def test():
     return "test"
 
 @app.route('/upload', methods=['POST'])
