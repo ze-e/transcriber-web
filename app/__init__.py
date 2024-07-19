@@ -5,9 +5,12 @@ import whisper
 import os
 from dotenv import load_dotenv
 from utils import format_timestamp
+from werkzeug.utils import secure_filename
 
 load_dotenv()
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = os.path.abspath("output")
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
 app.config["DEBUG"] = os.environ.get("FLASK_DEBUG")
 
 output_folder = os.path.abspath("output")
@@ -34,7 +37,7 @@ def upload_file():
         if os.path.isfile(file_path):
             os.unlink(file_path)
 
-    file_path = os.path.join(output_folder, file.filename)
+    file_path = os.path.join(output_folder, secure_filename(file.filename))
     file.save(file_path)
 
     if file.filename.lower().endswith('.wav') or file.filename.lower().endswith('.mp3') or file.filename.lower().endswith('.m4a'):
