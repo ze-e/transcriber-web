@@ -1,6 +1,5 @@
 # Python flask gitignore boilerplate
 keys.py
-output/
 backup/
 # Byte-compiled / optimized / DLL files
 __pycache__/
