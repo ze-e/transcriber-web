@@ -38,41 +38,58 @@ def upload_file():
     file.save(file_path)
 
     if file.filename.lower().endswith('.wav') or file.filename.lower().endswith('.mp3') or file.filename.lower().endswith('.m4a'):
+        print("Found audio file")
         audio_path = file_path
     else:
+        print("Found video file")
         video = VideoFileClip(file_path)
         audio_path = file_path.rsplit('.', 1)[0] + '.wav'
+        print("Extracting audio...")
         video.audio.write_audiofile(audio_path)
 
     # transcribe
     transcript_filename = file.filename.rsplit('.', 1)[0] + '_transcript.txt'
     transcript_path = os.path.join(output_folder, transcript_filename)
     if type == 'whisper':
-        model = whisper.load_model("medium")
-        result = model.transcribe(audio_path)
-        with open(transcript_path, 'w') as f:
+        print("Transcribing with whisper...")
+        try:
+            model = whisper.load_model("medium")
+            result = model.transcribe(audio_path)
             with open(transcript_path, 'w') as f:
-                for segment in result["segments"]:
-                    start_time = segment["start"]
-                    text = segment["text"]
-                    f.write(f"{format_timestamp(start_time)} - {text}\n")
+                with open(transcript_path, 'w') as f:
+                    print("Writing transcription...")
+                    for segment in result["segments"]:
+                        start_time = segment["start"]
+                        text = segment["text"]
+                        f.write(f"{format_timestamp(start_time)} - {text}\n")
+        except Exception as e:
+            print(f"Whisper error: ${e}")
     
     elif type == 'assembly':
-        aai.settings.api_key = os.environ.get("AAI_API_KEY")
-        config = aai.TranscriptionConfig(speaker_labels=True)
-        transcriber = aai.Transcriber()
-        result = transcriber.transcribe(
-            audio_path,
-            config=config
-        )
+        print("Transcribing with assembly...")
+        try:
+            aai.settings.api_key = os.environ.get("AAI_API_KEY")
+            config = aai.TranscriptionConfig(speaker_labels=True)
+            transcriber = aai.Transcriber()
+            result = transcriber.transcribe(
+                audio_path,
+                config=config
+            )
 
-        with open(transcript_path, 'w') as f:
-            for utterance in result.utterances:
-                f.write(f"{utterance.speaker.upper()}: {utterance.text}\n")
+            with open(transcript_path, 'w') as f:
+                print("Writing transcription...")
+                for utterance in result.utterances:
+                    f.write(f"{utterance.speaker.upper()}: {utterance.text}\n")
+        except Exception as e:
+            print(f"AssemblyAI error: ${e}")
     else:
         raise Exception("No transcriber type found")
-    transcript_url = request.host_url + 'output/' + transcript_filename
-    return jsonify({'message': 'File uploaded and processed successfully', 'transcript_url': transcript_url}), 200
+    try:
+        print("Saving transcription file...")
+        transcript_url = request.host_url + 'output/' + transcript_filename
+        return jsonify({'message': 'File uploaded and processed successfully', 'transcript_url': transcript_url}), 200
+    except Exception as e:
+        print(f"Error saving transcription: ${e}")
 
 @app.route('/output/<filename>')
 def download_file(filename):
