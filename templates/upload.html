@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Spirit Transcriber</title>
+    <style>
+        #spinner {
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            display: none;
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #status {
+            font-size: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #transcript-link {
+            font-size: 20px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transcribe a file</h1>
+    <h4>Select file with "Choose File".<br />They can be movies or audio files</h4>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <br/>
+        <br/>
+        <div>
+            <label for="transcriber"><strong>Choose a transcriber:</strong><br>(See descriptions below)</label>
+            <select id="transcriber" name="transcriber" required>
+                <option value="assembly" selected>Assembly</option>
+                <option value="whisper">Whisper</option>
+            </select>
+            <p>assembly - separates transcript by speakers<br>
+                whisper - returns one single block of text with timestamps</p>
+        </div>
+        <button type="submit">Click To Upload!</button>
+    </form>
+    <div id="spinner"></div>
+    <div id="status"></div>
+    <div id="transcript-link"><a id="transcript-url" href="/output/transcript.txt" target="_blank">Download Transcript</a></div>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const spinner = document.getElementById('spinner');
+            const status = document.getElementById('status');
+            const transcriptLink = document.getElementById('transcript-link');
+            const transcriptUrl = document.getElementById('transcript-url');
+
+            spinner.style.display = 'block'; // Show spinner
+            status.textContent = 'File uploading...\nPlease be patient, it may take a while...';
+            transcriptLink.style.display = 'none'; // Hide link initially
+
+            try {
+                const transcriber = document.getElementById('transcriber').value;
+                const response = await fetch(`/upload?transcriber=${transcriber}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    spinner.style.display = 'none'; // Hide spinner
+                    status.textContent = 'Success!';
+                    transcriptUrl.href = result.transcript_url; // Update link URL
+                    transcriptLink.style.display = 'block'; // Show link
+                } else {
+                    spinner.style.display = 'none'; // Hide spinner
+                    status.textContent = 'Error during processing';
+                }
+            } catch (error) {
+                spinner.style.display = 'none'; // Hide spinner
+                status.textContent = 'Network or server error';
+            }
+        };
+    </script>
+</body>
+</html>
