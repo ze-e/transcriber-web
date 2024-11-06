@@ -9,8 +9,7 @@ from werkzeug.utils import secure_filename
 import logging
 import cloudinary
 import cloudinary.uploader
-import numpy as np
-import torch
+import io
 
 load_dotenv()
 app = Flask(__name__)
@@ -77,15 +76,20 @@ def upload_file():
             model = whisper.load_model("medium")
             audio_data = whisper.load_audio(audio_path)
             result = model.transcribe(audio_data)
+            transcription_text = "".join(
+                f"{format_timestamp(segment['start'])} - {segment['text']}\n" for segment in result["segments"]
+            )
+            
             if data_source == "local":
                 with open(transcript_path, 'w') as f:
-                    for segment in result["segments"]:
-                        start_time = segment["start"]
-                        text = segment["text"]
-                        f.write(f"{format_timestamp(start_time)} - {text}\n")
+                    f.write(transcription_text)
             else:
-                transcription_text = "".join(f"{format_timestamp(segment['start'])} - {segment['text']}\n" for segment in result["segments"])
-                cloudinary_response = cloudinary.uploader.upload(transcription_text, resource_type='raw', folder='transcriptions', public_id=transcript_filename)
+                # Use in-memory file upload for serverless compatibility
+                temp_file = io.BytesIO(transcription_text.encode("utf-8"))
+                temp_file.name = f"{transcript_filename}.txt"
+                cloudinary_response = cloudinary.uploader.upload(
+                    temp_file, resource_type='raw', folder='transcriptions', public_id=transcript_filename
+                )
                 transcript_url = cloudinary_response['url']
 
         except Exception as e:
@@ -106,14 +110,20 @@ def upload_file():
 
             transcriber = aai.Transcriber()
             result = transcriber.transcribe(audio_url, config=config)
+            transcription_text = "".join(
+                f"{utterance.speaker.upper()}: {utterance.text}\n" for utterance in result.utterances
+            )
 
             if data_source == "local":
                 with open(transcript_path, 'w') as f:
-                    for utterance in result.utterances:
-                        f.write(f"{utterance.speaker.upper()}: {utterance.text}\n")
+                    f.write(transcription_text)
             else:
-                transcription_text = "".join(f"{utterance.speaker.upper()}: {utterance.text}\n" for utterance in result.utterances)
-                cloudinary_response = cloudinary.uploader.upload(transcription_text, resource_type='raw', folder='transcriptions', public_id=transcript_filename)
+                # Use in-memory file upload for serverless compatibility
+                temp_file = io.BytesIO(transcription_text.encode("utf-8"))
+                temp_file.name = f"{transcript_filename}.txt"
+                cloudinary_response = cloudinary.uploader.upload(
+                    temp_file, resource_type='raw', folder='transcriptions', public_id=transcript_filename
+                )
                 transcript_url = cloudinary_response['url']
 
         except Exception as e:
