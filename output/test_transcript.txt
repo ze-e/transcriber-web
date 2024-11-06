@@ -1,0 +1,87 @@
+00:00:00 -  Oasis. Okay, this is the talk of the town. Everyone's mentioning this. Everyone's posting about this.
+00:00:05 -  So this is a company that has generated a neural network that simulates Minecraft using only AI.
+00:00:12 -  So it's not actually Minecraft itself, but it'll play like Minecraft. But I can assure you,
+00:00:17 -  this is as best as they can demonstrate. It's not as good as this, and you'll see that very soon.
+00:00:22 -  So really, if you guys think this is any threat to regular Minecraft, it really isn't. And I
+00:00:27 -  don't think that's a realistic prospect anytime soon. I've seen existing footage of it that you
+00:00:31 -  guys have posted on rslashphoenixc and Twitter. There's no object permanence. Nothing really makes
+00:00:36 -  sense. Things will not play as it seems, but there is no denying that it is Minecraft. So you're
+00:00:42 -  about to enter a first of its kind video model. Every step you take will shape the environment
+00:00:47 -  around you in real time. So as I understand it, there is a queue. So if you try to play,
+00:00:52 -  it just says waiting for your turn. So as of right now, I'll just queue into it. Oh, it is my turn.
+00:00:57 -  Okay. So there's village outpost, dense forest, rugged coastline, desert expanse, and mountain
+00:01:03 -  meadow. Let's just do this one. Let's see. Everything you see is AI generated in real time by
+00:01:12 -  Descartes and Etched. So you can just look around. I only have five minutes here, and then you'll have
+00:01:17 -  to refresh. And then you've got another set of five minutes. If you want to play something else,
+00:01:20 -  you can see what I'm doing here. All of a sudden, my oak planks have turned into oak doors
+00:01:24 -  in my hotbar. Have a look at what you've got in your hand. So I don't know what this is. It's
+00:01:29 -  just like oak seeds. And of course it's Java edition. The things that you hold in your hotbar
+00:01:35 -  will constantly change and transform. Now I've suddenly got like a shovel. The game is looking
+00:01:40 -  at what you should have in your hotbar based on assessment of existing footage of the game. So
+00:01:46 -  all of a sudden now it's a pickaxe and now it's an axe. Suddenly I'm next to a tree and I have a
+00:01:51 -  bridge, but there is a village to my right. The game is, I'm not scrolling through my hotbar right
+00:01:56 -  now, but the game is scrolling for me. What is this? I have, I don't know what I'm doing.
+00:02:03 -  Let's try to place a block. Let's move my mouse down. So it's attempting to iterate frames based
+00:02:08 -  on what I'm doing with my mouse. Oh, it's crashed. All right. We'll try moving around this time. We
+00:02:13 -  can actually move around with WSD. So we will, where am I? Oh, I'm floating. Oh, that's weird.
+00:02:20 -  Oh, I'm now falling because I guess they understand that I'm actually supposed to be
+00:02:24 -  on a solid block. Is that right? Oh, I am on a solid, oh, I'm falling. Oh, I'm definitely falling.
+00:02:30 -  No, I'm still, I'm still falling. The player would never fall unless you make it seem like the player
+00:02:35 -  can fall by looking straight down. Obviously there's no core memory to this. It's all frame
+00:02:40 -  by frame based simulation. Oh, good. I can move now. Whoa, I am trapped. Let's, let's mine something
+00:02:46 -  and I mine this. Oh, I am mining it. Okay. So that's good. Oh, it's now shifted and transformed into
+00:02:53 -  sand. Fantastic. The one thing that I did mention, and you'll notice this immediately. So if you're
+00:02:58 -  not a fan of the terrain around you, just keep rotating your camera and all of a sudden you'll
+00:03:02 -  be placed in a completely different environment. So I'm suddenly in a snow biome. Oh, what is this?
+00:03:08 -  Oh, it's the sky. Oh, my session ended. We'll try rugged coastline here. A sheer drop from towering peaks.
+00:03:18 -  All right, at least I can move around here. Okay. So I've got a pickaxe. Let's place some blocks. So
+00:03:23 -  we've got, nope, I'm definitely not placing. Oh no. Oak. What oak is? Oh, I've placed a series of fences.
+00:03:33 -  I've just placed a series of fences and some sort of mineshaft-esque house. Nope. It's now an actual
+00:03:40 -  house. Can I open the door? I've opened the door and I am now in a desert. Once again, I'm in a deep
+00:03:48 -  hole of sand. No longer in a stony area. I found myself in what appears to be a desert village. I
+00:03:55 -  guess it doesn't really matter what version of the game it is. It really depends on what type of
+00:03:59 -  footage this AI is trained to watch and analyze. I don't know how much of whatever I have in my hand
+00:04:05 -  I have. It's a stack of something. Is it just fences? Oh, and the fences turn into dead bush.
+00:04:13 -  Oh, and now it's dark. And if I turn around here, there is a chasm. There is nothing down here. Will
+00:04:19 -  I fall if I, oh, I walked downstairs. Fantastic. All right, let's try eating. I am slightly hungry
+00:04:25 -  and I don't know if I had three hearts to begin with. Oh, I'm definitely eating. I'm eating and
+00:04:29 -  placing bread fences. I don't even know what that is. Oh, and it just, this terrain. Is it the fact
+00:04:35 -  that the longer I play in the certain environment, it just gets a little less clear what's going on?
+00:04:41 -  I've got a few cacti here. What's going to happen if I walk into it? I can't even walk into it. Oh,
+00:04:46 -  and there is a, oh, and the cacti turn into planes biome. Oh, what a great transition
+00:04:55 -  that is. Sugar cane. Is there a pillar and a brick wall? I don't know. Oh, and it's become a village
+00:05:01 -  again. Yeah, it's become a village again. Masked by sugar cane. Oh, the village is now gone. Got
+00:05:07 -  cobblestone here. There's some strange structure. If I stand still, what's going to happen next?
+00:05:13 -  Oh, and the village, is the village back? Nope. Is that a player? Nope. It's red flowers. Oh,
+00:05:18 -  I'm taking damage. How am I taking damage right now? Will I, oh, bonus. And I'm suddenly Alex.
+00:05:25 -  I don't know. I'm trying to right click this. Oh, trying to open the furnace. Is it gone? Yeah,
+00:05:31 -  the furnace is gone. And now it's just a regular planes area. It is rather fascinating how this AI
+00:05:35 -  has managed to create a completely different set of blocks around me. As it seems, the clearer the
+00:05:41 -  environment around you, the more accurate the next frame becomes. Let me try one more. And I guess
+00:05:47 -  while I wait my last turn here in mountain Meadow, it really makes no difference what any of this is.
+00:05:52 -  Whatever the case may be, whatever your opinion is, this is a monumental achievement and it cannot
+00:05:58 -  be understated. I've got nothing in my hand. This is actually very different. I've started off with
+00:06:03 -  nothing. So if I turn around again, is that mountain just gone? Yep. So if I keep turning around,
+00:06:09 -  will I generate something? Oh, I thought that was a village. Will I generate something else?
+00:06:14 -  Nope. If I look up to the sky and then look back down. Oh, now I'm on top of a mountain.
+00:06:22 -  And if I look up, oh, there are two suns. That's new. I'm suddenly in Star Wars and then go back
+00:06:28 -  down. Yeah. Okay. It's pretty clear what's going on. The heck, whether you like this or not,
+00:06:36 -  whether you think AI is taking away our creative freedoms, ruining our creative integrity, people
+00:06:42 -  are going to utilize technological advancements in their own recreational way. But if this is a
+00:06:46 -  stepping stone to something far more advanced in the future, then I think we need to embrace it
+00:06:51 -  because there is nothing stopping anyone from creating a blotchy drug induced Minecraft
+00:06:57 -  experience such as this one. I don't even know what's going on. Why is the sky yellow? What is
+00:07:02 -  it actually trying to assume with the yellowness of it? Everything is just yellow now. Is it meant
+00:07:07 -  to be like lava? Am I dying? I've barely been able to do anything. What if I just try hitting?
+00:07:13 -  The heck? Oh yeah. Okay. So I guess the desert was the next most logical sequence, right? Let's
+00:07:18 -  start punching. I don't know what that is. Oh, I still only have a pickaxe and a pickle. No,
+00:07:23 -  it's a torch. No, that's definitely a flower. Can I start generating things in my hot bar by just
+00:07:29 -  scrolling through? Oh, I have an inventory. What the heck? Okay. I didn't realize. Oh, I've been
+00:07:36 -  Alex this whole time. Why doesn't Alex have a face? Can I move something to my hot bar? I've got
+00:07:42 -  six seconds left. Oh, I can move something to my hot bar, but it's gone. All right. I'm not interested
+00:07:47 -  in this. I just want to see my inventory. Oh, I'm Steve now. Will I just randomly morph into another
+00:07:52 -  skin? I don't know. Oh, I'm crafting something. I didn't even click on anything. It's changing item.
+00:07:59 -  I'll leave this in the description because people have been asking about how to play it. Just
+00:08:03 -  whatever you do, if you find yourself playing this over and over and over again without any breaks,
+00:08:07 -  remove your eyes from the playing screen and look outside. Just make sure the world around
+00:08:11 -  you still exists. Oh, I've been playing survival this whole video.
