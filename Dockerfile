@@ -1,9 +1,9 @@
 # Use the official Python image as the base image
 FROM python:3.9-slim
 
-# Install system dependencies
+# Install system dependencies including ffmpeg and git
 RUN apt-get update && \
-    apt-get install -y ffmpeg && \
+    apt-get install -y ffmpeg git && \
     apt-get clean
 
 # Set environment variables
