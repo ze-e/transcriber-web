@@ -30,15 +30,13 @@ def test():
 def upload_file():
     file = request.files['file']
     type = request.args.get('transcriber', 'assembly').lower()
-    data_source = os.getenv("DATA_SOURCE", "local").lower()
 
-    # Ensure the output directory exists and clear old files if data_source is local
-    if data_source == "local":
-        os.makedirs(output_folder, exist_ok=True)
-        for filename in os.listdir(output_folder):
-            file_path = os.path.join(output_folder, filename)
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
+    #  clear old files if data_source is local
+    os.makedirs(output_folder, exist_ok=True)
+    for filename in os.listdir(output_folder):
+        file_path = os.path.join(output_folder, filename)
+        if os.path.isfile(file_path):
+            os.unlink(file_path)
 
     # Determine if the uploaded file is audio or video
     file_path = os.path.join(output_folder, secure_filename(file.filename))
