@@ -86,7 +86,7 @@ def upload_file():
     
     if type == 'whisper':
         try:
-            model = whisper.load_model("medium")
+            model = whisper.load_model("small")
             audio_data = whisper.load_audio(audio_path if data_source == "local" else audio_output)
             result = model.transcribe(audio_data)
             transcription_text = "".join(
