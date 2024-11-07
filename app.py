@@ -79,6 +79,7 @@ def upload_file():
             transcription_text = "".join(
                 f"{format_timestamp(segment['start'])} - {segment['text']}\n" for segment in result["segments"]
             )
+            print(transcription_text)
             
             if data_source == "local":
                 with open(transcript_path, 'w') as f:
