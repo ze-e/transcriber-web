@@ -19,6 +19,9 @@ app.config["DEBUG"] = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 
 output_folder = os.path.abspath("output")
 
+# Set up logging for debugging
+logging.basicConfig(level=logging.DEBUG)
+
 # Load Cloudinary configuration
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
@@ -48,6 +51,10 @@ def upload_file():
             file_path = os.path.join(output_folder, filename)
             if os.path.isfile(file_path):
                 os.unlink(file_path)
+
+    # Debug log to check directory status
+    logging.debug(f"Output folder exists: {os.path.exists(output_folder)}")
+    logging.debug(f"Output folder path: {output_folder}")
 
     # Determine if the uploaded file is audio or video
     file_path = os.path.join(output_folder, secure_filename(file.filename))

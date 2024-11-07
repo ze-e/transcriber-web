@@ -13,6 +13,9 @@ ENV PYTHONUNBUFFERED=1 \
 # Create and set the working directory
 WORKDIR /app
 
+# Create the output directory and set permissions
+RUN mkdir -p /app/output && chmod 755 /app/output
+
 # Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
