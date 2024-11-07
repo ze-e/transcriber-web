@@ -1,5 +1,5 @@
-# Use the official Python image as the base image
-FROM python:3.9-slim
+# Use the official Python 3.10 image as the base image
+FROM python:3.10-slim
 
 # Install system dependencies including ffmpeg and git
 RUN apt-get update && \
