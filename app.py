@@ -43,50 +43,68 @@ def upload_file():
     type = request.args.get('transcriber', 'assembly').lower()
     data_source = os.getenv("DATA_SOURCE", "local").lower()  # Get data source from environment variable
 
-    # Ensure the output directory exists for local storage
+    # Local case: Ensure the output directory exists and clear old files
     if data_source == "local":
         os.makedirs(output_folder, exist_ok=True)
-        # Delete all files in the output directory
         for filename in os.listdir(output_folder):
             file_path = os.path.join(output_folder, filename)
             if os.path.isfile(file_path):
                 os.unlink(file_path)
 
-    # Debug log to check directory status
-    logging.debug(f"Output folder exists: {os.path.exists(output_folder)}")
-    logging.debug(f"Output folder path: {output_folder}")
-
     # Determine if the uploaded file is audio or video
-    file_path = os.path.join(output_folder, secure_filename(file.filename))
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Ensure directory exists
-    file.save(file_path)
-
-    if file.filename.lower().endswith(('.wav', '.mp3', '.m4a')):
-        audio_path = file_path
+    if data_source == "local":
+        file_path = os.path.join(output_folder, secure_filename(file.filename))
+        file.save(file_path)
     else:
-        # For video files, extract audio
+        # For Cloudinary, save the file in memory as a BytesIO stream
+        temp_audio_path = secure_filename(file.filename)
+        audio_bytes = io.BytesIO(file.read())
+    
+    if file.filename.lower().endswith(('.wav', '.mp3', '.m4a')):
+        if data_source == "local":
+            audio_path = file_path
+        else:
+            audio_path = temp_audio_path
+    else:
+        # Extract audio for video files
         try:
-            video = VideoFileClip(file_path)
-            audio_path = file_path.rsplit('.', 1)[0] + '.wav'
-            video.audio.write_audiofile(audio_path)
+            if data_source == "local":
+                video = VideoFileClip(file_path)
+                audio_path = file_path.rsplit('.', 1)[0] + '.wav'
+                video.audio.write_audiofile(audio_path)
+            else:
+                video = VideoFileClip(audio_bytes)
+                audio_path = temp_audio_path.rsplit('.', 1)[0] + '.wav'
+                audio_output = io.BytesIO()
+                video.audio.write_audiofile(audio_output)
+                audio_output.seek(0)
         except Exception as e:
             return jsonify({'error': f"Error processing video file: {e}"}), 500
 
     # Process transcription
     transcript_filename = file.filename.rsplit('.', 1)[0] + '_transcript.txt'
-    transcript_path = os.path.join(output_folder, transcript_filename)
-
+    
     if type == 'whisper':
         try:
             model = whisper.load_model("medium")
-            audio_data = whisper.load_audio(audio_path)
+            audio_data = whisper.load_audio(audio_path if data_source == "local" else audio_output)
             result = model.transcribe(audio_data)
             transcription_text = "".join(
                 f"{format_timestamp(segment['start'])} - {segment['text']}\n" for segment in result["segments"]
             )
 
-            with open(transcript_path, 'w') as f:
-                f.write(transcription_text)
+            if data_source == "local":
+                transcript_path = os.path.join(output_folder, transcript_filename)
+                with open(transcript_path, 'w') as f:
+                    f.write(transcription_text)
+            else:
+                # Use Cloudinary to upload transcript as a text file
+                temp_file = io.BytesIO(transcription_text.encode("utf-8"))
+                temp_file.name = transcript_filename
+                cloudinary_response = cloudinary.uploader.upload(
+                    temp_file, resource_type='raw', folder='transcriptions', public_id=transcript_filename
+                )
+                transcript_url = cloudinary_response['url']
                 
         except Exception as e:
             return jsonify({'error': f"Whisper error: {e}"}), 500
@@ -97,9 +115,15 @@ def upload_file():
             config = aai.TranscriptionConfig(speaker_labels=True)
 
             audio_url = None
-            with open(audio_path, 'rb') as audio_file:
-                upload_response = aai.upload(audio_file)
-                audio_url = upload_response['upload_url']
+            if data_source == "local":
+                with open(audio_path, 'rb') as audio_file:
+                    upload_response = aai.upload(audio_file)
+                    audio_url = upload_response['upload_url']
+            else:
+                audio_upload = cloudinary.uploader.upload(
+                    audio_output, resource_type='video', folder='audio_files', public_id=temp_audio_path
+                )
+                audio_url = audio_upload['url']
 
             transcriber = aai.Transcriber()
             result = transcriber.transcribe(audio_url, config=config)
@@ -107,16 +131,33 @@ def upload_file():
                 f"{utterance.speaker.upper()}: {utterance.text}\n" for utterance in result.utterances
             )
 
-            with open(transcript_path, 'w') as f:
-                f.write(transcription_text)
-
+            if data_source == "local":
+                transcript_path = os.path.join(output_folder, transcript_filename)
+                with open(transcript_path, 'w') as f:
+                    f.write(transcription_text)
+            else:
+                # Upload transcription text to Cloudinary
+                temp_file = io.BytesIO(transcription_text.encode("utf-8"))
+                temp_file.name = transcript_filename
+                cloudinary_response = cloudinary.uploader.upload(
+                    temp_file, resource_type='raw', folder='transcriptions', public_id=transcript_filename
+                )
+                transcript_url = cloudinary_response['url']
+                
         except Exception as e:
             return jsonify({'error': f"AssemblyAI error: {e}"}), 500
 
-    return jsonify({
-        'message': 'File uploaded and processed successfully',
-        'transcript_url': url_for('uploaded_file', filename=transcript_filename)
-    })
+    # Return the correct URL for local or Cloudinary storage
+    if data_source == "local":
+        return jsonify({
+            'message': 'File uploaded and processed successfully',
+            'transcript_url': url_for('uploaded_file', filename=transcript_filename)
+        })
+    else:
+        return jsonify({
+            'message': 'File uploaded and processed successfully',
+            'transcript_url': transcript_url
+        })
 
 @app.route('/output/<filename>')
 def uploaded_file(filename):
