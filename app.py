@@ -7,9 +7,6 @@ from dotenv import load_dotenv
 from utils import format_timestamp
 from werkzeug.utils import secure_filename
 import logging
-import cloudinary
-import cloudinary.uploader
-import io
 
 load_dotenv()
 app = Flask(__name__)
@@ -20,13 +17,6 @@ output_folder = os.path.abspath("output")
 
 # Set up logging for debugging
 logging.basicConfig(level=logging.DEBUG)
-
-# Load Cloudinary configuration
-cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET")
-)
 
 @app.route('/', methods=['GET'])
 def home():
