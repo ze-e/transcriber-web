@@ -1,27 +1,17 @@
-# Use the official Python 3.10 image as the base image
-FROM python:3.10-slim
+# Use the official Python image
+FROM python:3.10
 
-# Install system dependencies including ffmpeg and git
-RUN apt-get update && \
-    apt-get install -y ffmpeg git && \
-    apt-get clean
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
-
-# Create and set the working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy requirements and install dependencies
-COPY requirements.txt .
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
-COPY . .
-
-# Expose port 8080 for Google Cloud Run
+# Expose the port that the app will run on
 EXPOSE 8080
 
-# Command to run the Flask app with Gunicorn
-CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:8080", "--timeout", "120", "app:app"]
+# Run the Flask app
+CMD ["gunicorn", "-b", "0.0.0.0:8080", "app:app"]
