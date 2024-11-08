@@ -1,0 +1,26 @@
+# Ignore Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+venv/
+.env
+
+# Ignore output folder for local file storage
+output/
+
+# Ignore Dockerfile and docker-compose files themselves
+Dockerfile
+docker-compose.yml
+
+# Ignore git files
+.git/
+.gitignore
+
+# Ignore other common files
+*.log
+*.sqlite3
+*.db
+*.DS_Store

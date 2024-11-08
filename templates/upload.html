@@ -37,16 +37,7 @@
         <input type="file" name="file" required>
         <br/>
         <br/>
-        <div>
-            <label for="transcriber"><strong>Choose a transcriber:</strong><br>(See descriptions below)</label>
-            <select id="transcriber" name="transcriber" required>
-                <option value="assembly" selected>Assembly</option>
-                <option value="whisper">Whisper</option>
-            </select>
-            <p>assembly - separates transcript by speakers<br>
-                whisper - returns one single block of text with timestamps</p>
-        </div>
-        <button type="submit">Click To Upload!</button>
+        <button type="submit" id="upload-button">Click To Upload!</button>
     </form>
     <div id="spinner"></div>
     <div id="status"></div>
@@ -54,6 +45,8 @@
 
     <script>
         const form = document.getElementById('upload-form');
+        const uploadButton = document.getElementById('upload-button');
+
         form.onsubmit = async (e) => {
             e.preventDefault();
             const formData = new FormData(form);
@@ -62,29 +55,31 @@
             const transcriptLink = document.getElementById('transcript-link');
             const transcriptUrl = document.getElementById('transcript-url');
 
-            spinner.style.display = 'block'; // Show spinner
+            // Disable the button and show the spinner
+            uploadButton.disabled = true;
+            spinner.style.display = 'block';
             status.textContent = 'File uploading...\nPlease be patient, it may take a while...';
             transcriptLink.style.display = 'none'; // Hide link initially
 
             try {
-                const transcriber = document.getElementById('transcriber').value;
-                const response = await fetch(`/upload?transcriber=${transcriber}`, {
+                const response = await fetch(`/upload`, {
                     method: 'POST',
                     body: formData
                 });
                 const result = await response.json();
                 if (response.ok) {
-                    spinner.style.display = 'none'; // Hide spinner
                     status.textContent = 'Success!';
                     transcriptUrl.href = result.transcript_url; // Update link URL
                     transcriptLink.style.display = 'block'; // Show link
                 } else {
-                    spinner.style.display = 'none'; // Hide spinner
                     status.textContent = 'Error during processing';
                 }
             } catch (error) {
-                spinner.style.display = 'none'; // Hide spinner
                 status.textContent = 'Network or server error';
+            } finally {
+                // Re-enable the button and hide the spinner
+                uploadButton.disabled = false;
+                spinner.style.display = 'none';
             }
         };
     </script>
