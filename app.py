@@ -9,6 +9,7 @@ import logging
 import cloudinary
 import cloudinary.uploader
 import io
+import tempfile
 
 load_dotenv()
 app = Flask(__name__)
@@ -43,40 +44,63 @@ def test():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     file = request.files['file']
+    filename = secure_filename(file.filename)  # Use filename for file type checks
 
-    # Prepare local or cloudinary storage
+    # Prepare local or Cloudinary storage
     if data_source == "local":
         os.makedirs(output_folder, exist_ok=True)
-        for filename in os.listdir(output_folder):
-            file_path = os.path.join(output_folder, filename)
+        for f in os.listdir(output_folder):
+            file_path = os.path.join(output_folder, f)
             if os.path.isfile(file_path):
                 os.unlink(file_path)
-        file_path = os.path.join(output_folder, secure_filename(file.filename))
+        file_path = os.path.join(output_folder, filename)
         file.save(file_path)
         audio_path = file_path
     else:
         audio_bytes = io.BytesIO(file.read())
-        temp_audio_path = secure_filename(file.filename)
-        audio_output = audio_bytes
+        temp_audio_path = filename
 
-    # Handle video or audio input
-    if not file.filename.lower().endswith(('.wav', '.mp3', '.m4a')):
-        # Extract audio from video
+    # Handle video or audio input based on filename (not audio_bytes)
+    if not filename.lower().endswith(('.wav', '.mp3', '.m4a')):
+        # Process video files by extracting audio
         try:
             if data_source == "local":
+                # Local: Extract audio from video file saved on disk
                 video = VideoFileClip(file_path)
                 audio_path = file_path.rsplit('.', 1)[0] + '.wav'
                 video.audio.write_audiofile(audio_path)
+                video.close()  # Close the VideoFileClip to release the file
             else:
-                video = VideoFileClip(audio_bytes)
-                audio_output = io.BytesIO()
-                video.audio.write_audiofile(audio_output)
+                # Cloudinary or BytesIO: Save BytesIO video to a temp file for VideoFileClip
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_video_file:
+                    temp_video_file.write(audio_bytes.getvalue())
+                    temp_video_path = temp_video_file.name
+
+                # Load video from the temporary file and extract audio to another temp file
+                video = VideoFileClip(temp_video_path)
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_audio_file:
+                    temp_audio_path = temp_audio_file.name
+                video.audio.write_audiofile(temp_audio_path)
+                video.close()  # Close the VideoFileClip to release the file
+
+                # Delete the temporary video file
+                os.remove(temp_video_path)
+
+                # Set audio_output to read from the saved audio file for uploading
+                with open(temp_audio_path, 'rb') as audio_file:
+                    audio_output = io.BytesIO(audio_file.read())
+                os.remove(temp_audio_path)  # Delete the temporary audio file
                 audio_output.seek(0)
+
+                # Generate a simple Cloudinary-compatible public_id
+                cloudinary_public_id = os.path.splitext(temp_audio_path)[0].replace("\\", "/").split("/")[-1]
         except Exception as e:
             return jsonify({'error': f"Error processing video file: {e}"}), 500
     else:
+        # If it’s an audio file, set audio_output for Cloudinary upload
         if data_source == "cloudinary":
             audio_output = audio_bytes
+            cloudinary_public_id = os.path.splitext(filename)[0]
 
     # Upload audio to AssemblyAI
     try:
@@ -85,8 +109,9 @@ def upload_file():
                 upload_response = aai.upload(audio_file)
                 audio_url = upload_response['upload_url']
         else:
+            # Upload the audio to Cloudinary with a compatible public_id
             cloudinary_response = cloudinary.uploader.upload(
-                audio_output, resource_type='video', folder='audio_files', public_id=temp_audio_path
+                audio_output, resource_type='video', folder='audio_files', public_id=cloudinary_public_id
             )
             audio_url = cloudinary_response['url']
 
@@ -99,7 +124,7 @@ def upload_file():
         )
 
         # Store or upload transcription
-        transcript_filename = file.filename.rsplit('.', 1)[0] + '_transcript.txt'
+        transcript_filename = filename.rsplit('.', 1)[0] + '_transcript.txt'
         if data_source == "local":
             transcript_path = os.path.join(output_folder, transcript_filename)
             with open(transcript_path, 'w') as f:
